@@ -102,7 +102,7 @@ function getData () {
 	//read file contents
 	var contents = fs.readFileSync(TASK_JSON_PATH);
 
-	//parse contents
+	//parse contents with cheese
     var data = JSON.parse(contents);
 
 	return data;
