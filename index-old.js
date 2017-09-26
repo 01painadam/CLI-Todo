@@ -3,41 +3,85 @@ var program = require('commander');
 var fs = require('fs');
 var TASK_JSON_PATH = "./todo.json";
 
+
 init();
 
 program
     .version('0.0.1')
-    .command('run <arg1> [arg2] [arg3]')
-    .description('Run todo list')
-    //.option('-a, --all','Select all (for del or res only')
+    .command('add <task>')
+    .description('Add a new task to list') //<REQUIRED INPUT> 
     .action(
 
-        (arg1,arg2,arg3) => {
-            
-            switch(arg1){
-                case "add":
-                    add(arg2);
-                    break;
-                case "res":
-                    done(arg2);
-                    break;
-                case "del":
-                    del(arg2);
-                    break;
-                case "edit":
-                    edit(arg2, arg3);
-                    break;
-                case "help":
-                    menu();
-                    break;
-                case 'list':
-                    list();
-                    break;
-                default:
-                    console.log("Command not found!!\n");
-                    break;
-            }
-        }
+    task => {
+        console.log('User passed task: %s', task);
+        add(task);
+
+    }
+
+    )
+
+program
+    .version('0.0.1')
+    .command('edit <id> <new_task>')
+    .description('Edit a task by id') //<REQUIRED INPUT> 
+    .action(
+
+    (id, new_task) => {
+        console.log('Edited task: %s', id);
+        edit(id, new_task);
+
+    }
+
+    )
+
+program
+    .version('0.0.1')
+    .command('del <id>')
+    .description('Delete task by id') //<REQUIRED INPUT> 
+    .action(
+
+    id => {
+        console.log('Deleting task: %s', id);
+        del(id);
+    }
+
+    )
+
+program
+    .version('0.0.1')
+    .command('res <id>')
+    .description('Resolvee task as "done" by id') //<REQUIRED INPUT> 
+    .action(
+
+    id => {
+        console.log('Resolving task: %s', id);
+        done(id);
+    }
+
+    )
+
+program
+    .version('0.0.1')
+    .command('list')
+    .description('List all tasks') //<REQUIRED INPUT> 
+    .action(
+
+    () => {
+        console.log('Tasks: ');
+        list();
+    }
+
+    )
+
+program
+    .version('0.0.1')
+    .command('help')
+    .description('Show help menu') //<REQUIRED INPUT> 
+    .action(
+
+    () => {
+        menu();
+    }
 
     )
 
@@ -48,7 +92,7 @@ program.parse(process.argv);
 function init() {
     //create file if it's not already present.
     if (!fs.existsSync(TASK_JSON_PATH)) {
-        console.log("Initialising storage.\nCreating `todo.json` file...\n\n");
+        console.log("Initialising storage.\n Creating `todo.json` file");
         setData([]);
     }
 
@@ -86,11 +130,11 @@ function objectify(x, id_count) {
 }
 
 function menu() {
-    console.log('ADD: todo run add <task description>');
-    console.log('EDIT: todo run edit <id> <new task description> ');
-    console.log('DEL & RES: todo run [del|res] <id>');
-    console.log('List all: todo run list');
-    console.log('Help: todo run help');
+    console.log('ADD: todo add <task description>');
+    console.log('EDIT: todo edit <id> <new task description> ');
+    console.log('DEL & RES: todo [del|res] <id>');
+    console.log('List all: todo list');
+    console.log('Help: todo help');
 }
 
 function renumber(data) {
