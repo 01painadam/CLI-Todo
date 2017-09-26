@@ -1,0 +1,19 @@
+{
+  "name": "cli-todo",
+  "version": "0.0.1",
+  "description": "Command Line Todo List",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AJ",
+  "license": "ISC",
+  "bin": {
+    "todo": "./index.js"
+  },
+  "dependencies": {
+    "co": "^4.6.0",
+    "co-prompt": "^1.0.0",
+    "commander": "^2.11.0"
+  }
+}
