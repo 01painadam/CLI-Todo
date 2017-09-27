@@ -1,80 +1,43 @@
 #!/usr/bin/env node
-var program = require('commander');
-var fs = require('fs');
-var TASK_JSON_PATH = "./todo.json";
+'use strict';
 
-init();
+let program = require('commander');
+let fs = require('fs');
 
-program
-    .version('0.0.1')
-    .command('run <arg1> [arg2] [arg3]')
-    .description('Run todo list')
-    //.option('-a, --all','Select all (for del or res only')
-    .action(
-
-        (arg1,arg2,arg3) => {
-            
-            switch(arg1){
-                case "add":
-                    add(arg2);
-                    break;
-                case "res":
-                    done(arg2);
-                    break;
-                case "del":
-                    del(arg2);
-                    break;
-                case "edit":
-                    edit(arg2, arg3);
-                    break;
-                case "help":
-                    menu();
-                    break;
-                case 'list':
-                    list();
-                    break;
-                default:
-                    console.log("Command not found!!\n");
-                    break;
-            }
-        }
-
-    )
-
-program.parse(process.argv);
+const TASK_JSON_PATH = "./todo.json";
 
 //FUNCTIONS/////////////////////////////////////////////////////////////////////////
 
-function init() {
+let init = () => {
     //create file if it's not already present.
     if (!fs.existsSync(TASK_JSON_PATH)) {
-        console.log("Initialising storage.\nCreating `todo.json` file...\n\n");
+        console.log("Initialising storage.\n Creating `todo.json` file");
         setData([]);
     }
 
 }
 
-function getData() {
+let getData = () => {
     //read file contents
-    var contents = fs.readFileSync(TASK_JSON_PATH);
+    let contents = fs.readFileSync(TASK_JSON_PATH);
 
     //parse contents
-    var data = JSON.parse(contents);
+    let data = JSON.parse(contents);
 
     return data;
 }
 
 
-function setData(data) {
+let setData = data => {
     //strigify JSON
-    var dataString = JSON.stringify(data);
+    let dataString = JSON.stringify(data);
 
     //write to  file
     fs.writeFileSync(TASK_JSON_PATH, dataString);
 }
 
-function objectify(x, id_count) {
-    var obj = {
+let objectify = (x, id_count) => {
+    let obj = {
 
         id: id_count,
         task: x,
@@ -85,17 +48,17 @@ function objectify(x, id_count) {
 
 }
 
-function menu() {
-    console.log('ADD: todo run add <task description>');
-    console.log('EDIT: todo run edit <id> <new task description> ');
-    console.log('DEL & RES: todo run [del|res] <id>');
-    console.log('List all: todo run list');
-    console.log('Help: todo run help');
+let menu = () => {
+    console.log('ADD: todo add <task description>');
+    console.log('EDIT: todo edit <id> <new task description> ');
+    console.log('DEL & RES: todo [del|res] <id>');
+    console.log('List all: todo list');
+    console.log('Help: todo help');
 }
 
-function renumber(data) {
+let renumber = data => {
 
-    for (var i in data) {
+    for (let i in data) {
 
         data[i].id = i;
 
@@ -105,23 +68,23 @@ function renumber(data) {
 
 }
 
-function list() {
+let list = () => {
 
-    var data = getData();
+    let data = getData();
 
     if (data.length > 0) {
 
-        for (var i in data) console.log(data[i]);
+        for (let i in data) console.log(data[i]);
 
     }
     else { console.log('\nNo tasks in list!\n'); }
 
 }
 
-function add(task) {
+let add = task => {
 
-    var data = getData();
-    var id = data.length;
+    let data = getData();
+    let id = data.length;
 
     data.push(objectify(task, id));
 
@@ -131,9 +94,9 @@ function add(task) {
 
 }
 
-function resolved(id) {
+let res = id => {
 
-    var data = getData();
+    let data = getData();
 
     //toggle whether task is resolved
     data[id].done != data[id].done;
@@ -144,9 +107,9 @@ function resolved(id) {
 
 }
 
-function del(id) {
+let del = id => {
 
-    var data = getData();
+    let data = getData();
 
     data.splice(id, 1);
 
@@ -158,9 +121,9 @@ function del(id) {
 
 }
 
-function edit(id, edit) {
+let edit = (id, edit) => {
 
-    var data = getData();
+    let data = getData();
 
     data[id].task = edit;
 
@@ -169,3 +132,91 @@ function edit(id, edit) {
     list();
 
 }
+
+//CODE////////////////////////////////////////////
+
+
+init();
+
+program
+    .version('0.0.1')
+    .command('add <task>')
+    .description('Add a new task to list') 
+    .action(
+
+    task => {
+        console.log('User passed task: %s', task);
+        add(task);
+
+    }
+
+    )
+
+program
+    .version('0.0.1')
+    .command('edit <id> <new_task>')
+    .description('Edit a task by id') 
+    .action(
+
+    (id, new_task) => {
+        console.log('Edited task: %s', id);
+        edit(id, new_task);
+
+    }
+
+    )
+
+program
+    .version('0.0.1')
+    .command('del <id>')
+    .description('Delete task by id')  
+    .action(
+
+    id => {
+        console.log('Deleting task: %s', id);
+        del(id);
+    }
+
+    )
+
+program
+    .version('0.0.1')
+    .command('res <id>')
+    .description('Resolvee task as "done" by id')
+    .action(
+
+    id => {
+        console.log('Resolving task: %s', id);
+        res(id);
+    }
+
+    )
+
+program
+    .version('0.0.1')
+    .command('list')
+    .description('List all tasks') //<REQUIRED INPUT> 
+    .action(
+
+    () => {
+        console.log('Tasks: ');
+        list();
+    }
+
+    )
+
+program
+    .version('0.0.1')
+    .command('help')
+    .description('Show help menu') //<REQUIRED INPUT> 
+    .action(
+
+    () => {
+        menu();
+    }
+
+    )
+
+program.parse(process.argv);
+
+
