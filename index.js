@@ -4,6 +4,10 @@
 let program = require('commander');
 let fs = require('fs');
 
+const express = require('express');
+const app = express();
+const MongoClient = require('mongodb').MongoClient;
+
 const TASK_JSON_PATH = "./todo.json";
 
 //FUNCTIONS/////////////////////////////////////////////////////////////////////////
@@ -133,6 +137,28 @@ let edit = (id, edit) => {
 
 }
 
+//MONGO///////////////////////////////////////////
+
+let save = () => {
+
+    MongoClient.connect('mongodb://01painadam:Aj6owp!1@ds143744.mlab.com:43744/test_cli_db', (err, db) => {
+        if (err) return console.log(err);
+
+        let data = getData();
+
+        for (let i in data) {
+            db.collection('notes').insertOne(data[i], (err, result) => {
+                if (err) return console.log(err);
+                console.log(`Saved ${data[i]} to Database.\n`);
+            })
+        }
+
+    })
+
+}
+
+
+
 //CODE////////////////////////////////////////////
 
 
@@ -213,6 +239,18 @@ program
 
     () => {
         menu();
+    }
+
+    )
+
+program
+    .version('0.0.1')
+    .command('save')
+    .description('Save database to remote Mongo') //<REQUIRED INPUT> 
+    .action(
+
+    () => {
+        save();
     }
 
     )
