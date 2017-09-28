@@ -152,6 +152,7 @@ let save = () => {
                 console.log(`Saved ${data[i]} to Database.\n`);
             })
         }
+        db.close();
 
     })
 
